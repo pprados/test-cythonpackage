@@ -1,0 +1,11 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "Cython",
+]
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel.environment]
+PIP_EXTRA_INDEX_URL="https://pypi.org/simple"
+PIP_INDEX_URL="https://test.pypi.org/simple"
