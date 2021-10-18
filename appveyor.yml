@@ -14,7 +14,7 @@ init:
 
 install: python -m pip install cibuildwheel==2.1.3
 
-build_script: CIBW_SKIP="cp36-*" python -m cibuildwheel --output-dir wheelhouse
+build_script: CIBW_SKIP="cp310-*" python -m cibuildwheel --output-dir wheelhouse
 
 artifacts:
   - path: "wheelhouse\\*.whl"

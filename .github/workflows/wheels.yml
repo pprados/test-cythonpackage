@@ -25,7 +25,7 @@ jobs:
         # env:
         #   CIBW_SOME_OPTION: value
         env:
-          CIBW_SKIP: cp36-* cp310-*
+          CIBW_SKIP: cp310-*
 
       - uses: actions/upload-artifact@v2
         with:

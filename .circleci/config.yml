@@ -26,7 +26,7 @@ jobs:
           name: Build the OS X wheels.
           command: |
             pip3 install cibuildwheel
-            CIBW_SKIP="cp36-*" cibuildwheel --output-dir wheelhouse
+            CIBW_SKIP="cp310-*" cibuildwheel --output-dir wheelhouse
       - store_artifacts:
           path: wheelhouse/
 
