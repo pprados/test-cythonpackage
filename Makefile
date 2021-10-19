@@ -88,13 +88,18 @@ test: bdist
 	export PIP_INDEX_URL=https://test.pypi.org/simple
 	rm -Rf build dist
 	python setup.py bdist_wheel
+	mkdir -p /tmp/$(PRJ)
+	virtualenv /tmp/$(PRJ)/venv
+	source /tmp/$(PRJ)/venv/bin/activate
 	pip install --force-reinstall dist/*.whl
+	cd /tmp/$(PRJ)
 	python -c 'import foo.bar_a; foo.bar_a.print_me()'
 	python -c 'import foo.bar_b; foo.bar_b.print_me()'
 	python -c 'import foo.sub.sub; foo.sub.sub.print_me()'
 	python -c 'import foo2.bar_c; foo2.bar_c.print_me()'
 	python -c 'import foo2.bar_d; foo2.bar_d.print_me()'
 	python -c 'import foo3.bar_e; foo3.bar_e.print_me()' | true
+	rm -Rf /tmp/$(PRJ)
 
 
 # --------------------------- Distribution
