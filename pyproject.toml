@@ -1,30 +1,35 @@
+#[build-system]
+#requires = [ "setuptools>=42", "wheel"]
+#build-backend = "setuptools.build_meta"
+
 [build-system]
 build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning","cythonpackage[build]"]
-
-[tool.poetry-dynamic-versioning]
-enable = true
+requires = ["poetry-core>=1.0.0", "cythonpackage[build]"]
 
 [tool.poetry]
 name = "test-cythonpackage"
 version = "0.0.0"  # Be calculate
 description = "Test cythonpackage"
 authors = ["Philippe Prados <github@prados.fr>"]
+license = "Apache-2.0"
 packages = [
     { include = "foo" },
     { include = "foo2" },
     { include = "foo3" },
 ]
-exclude = ["**/*.py"]
-build = 'build.py'
+exclude = ["**/[!__]*.py"]
+build = 'poetry_build.py'
 
 [tool.poetry.dependencies]
 python = "^3.7"
 cythonpackage = "*"
+
+[tool.poetry.dev-dependencies]
+cibuildwheel = "^2.1.*"
+twine = "^3.*"
 
 [[tool.poetry.source]]
 name = 'private'
 url = 'http://localhost:8888/simple'
 #name = 'test'
 #url = 'https://test.pypi.org/simple'
-

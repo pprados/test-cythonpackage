@@ -26,6 +26,10 @@ jobs:
         #   CIBW_SOME_OPTION: value
         env:
           CIBW_SKIP: cp310-*
+          # FIXME
+          PIP_EXTRA_INDEX_URL: https://pypi.org/simple
+          PIP_INDEX_URL: https://test.pypi.org/simple
+
 
       - uses: actions/upload-artifact@v2
         with:
