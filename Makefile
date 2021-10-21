@@ -110,7 +110,8 @@ dist/:
 dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) | dist/
 	@$(VALIDATE_VENV)
 	export PBR_VERSION=$$(git describe --tags)
-	python setup.py bdist_wheel
+	# Pre-pep517 $(PYTHON) setup.py bdist_wheel
+	pip wheel --no-deps -w dist .
 
 
 ## Create a binary wheel distribution for different version

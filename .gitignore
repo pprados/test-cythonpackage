@@ -14,3 +14,4 @@ dist/
 AUTHORS
 ChangeLog
 poetry.lock
+*.dist-info/

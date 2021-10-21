@@ -1,62 +1,30 @@
 [build-system]
-requires = ["poetry>=1.2.0a2", "cythonpackage"]
-build-backend = "poetry.masonry.api"
+build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning","cythonpackage[build]"]
 
-# Implicite setup.py d'après pep-0517
-#build-backend = "setuptools.build_meta:X__legacy__ backend"
-
-
+[tool.poetry-dynamic-versioning]
+enable = true
 
 [tool.poetry]
 name = "test-cythonpackage"
-version = "0.0.0"
+version = "0.0.0"  # Be calculate
 description = "Test cythonpackage"
 authors = ["Philippe Prados <github@prados.fr>"]
-license = "Apache-2.0"
 packages = [
-#    { include = "setup.*" },
     { include = "foo" },
-#    { include = "foo2" },
-#    { include = "foo3" },
+    { include = "foo2" },
+    { include = "foo3" },
 ]
-#exclude = ["**/*.py"]
-# Auto injecté dans le setup.py généré (bof), mais sinon n'invoque pas le setup.py build
-# Voir wheel.py(108) Ouvrir un ticket ?
-# Si pas de setup et pas de build, alors ne génère rien.
-# C'est la cible en mode plugin
+exclude = ["**/*.py"]
 build = 'build.py'
-
-[tool.poetry.plugins."poetry.plugin"]
-cythonpackage = "cythonpackage.plugin:XXMyPlugin"
-
-#[tool.poetry.plugins."poetry.application.plugin"]
-#foo-command = "cythonpackage.plugin:MyApplicationPlugin"
 
 [tool.poetry.dependencies]
 python = "^3.7"
-cython = "^0.29.24"
-#cythonpackage = "0.0.0"
-#cythonpackage = {path = "../"}
+cythonpackage = "*"
 
-# [tool.poetry.dev-dependencies]
-# cibuildwheel = "^2.1.*"
-# twine = "^3.*"
+[[tool.poetry.source]]
+name = 'private'
+url = 'http://localhost:8888/simple'
+#name = 'test'
+#url = 'https://test.pypi.org/simple'
 
-
-# [build-system]
-# requires = [
-#     "setuptools>=42",
-#     "wheel",
-#     "Cython",
-#     "cythonpackage"
-# ]
-# build-backend = "poetry.core.masonry.api"
-#build-backend = "setuptools.build_meta"
-
-# [[tool.poetry.source]]
-# name = 'private'
-# url = 'http://localhost:8888/simple'
-
-# # Use test.pypi.org
-# name = "test-pypi"
-# url = "https://test.pypi.org/simple"
