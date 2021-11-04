@@ -12,10 +12,10 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='test-cythonpackage',
-    version='0.0.0',
-    setup_requires=['cythonpackage[build]'],
+    # setup_requires=['cythonpackage[build]>=0.1.1'],
     cythonpackage=True,
+    # name="test-cythonpackage",
+    # version="v0.0.0",
     # cythonpackage={
     #     "inject_ext_modules": True,
     #     "inject_init": True,

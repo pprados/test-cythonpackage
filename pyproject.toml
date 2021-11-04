@@ -1,5 +1,5 @@
 #[build-system]
-#requires = [ "setuptools>=42", "wheel"]
+#requires = ["setuptools>=42", "wheel"]
 #build-backend = "setuptools.build_meta"
 
 [build-system]
@@ -10,14 +10,14 @@ requires = ["poetry-core>=1.0.0", "cythonpackage[build]"]
 name = "test-cythonpackage"
 version = "0.0.0"  # Be calculate
 description = "Test cythonpackage"
-authors = ["Philippe Prados <github@prados.fr>"]
+authors = ["Your Name <your.name@example.com>"]
 license = "Apache-2.0"
 packages = [
     { include = "foo" },
     { include = "foo2" },
     { include = "foo3" },
 ]
-exclude = ["**/[!__]*.py"]
+exclude = ["**/[!__]*.py"] # Remove source code
 build = 'poetry_build.py'
 
 [tool.poetry.dependencies]

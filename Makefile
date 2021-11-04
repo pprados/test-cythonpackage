@@ -82,6 +82,9 @@ clean:
 	@rm -rf .eggs $(PRJ).egg-info .mypy_cache .pytest_cache .start build nohup.out dist \
 		.make-* .pytype out.json
 
+init:
+	pip install -e '.[dev]'
+
 ## Test the usage of cythonpackage
 test: bdist
 	export PIP_EXTRA_INDEX_URL=https://pypi.org/simple
@@ -89,16 +92,17 @@ test: bdist
 	rm -Rf build dist
 	python setup.py bdist_wheel
 	mkdir -p /tmp/$(PRJ)
-	virtualenv /tmp/$(PRJ)/venv
+	pip install -q virtualenv
+	python -m virtualenv /tmp/$(PRJ)/venv
 	source /tmp/$(PRJ)/venv/bin/activate
-	pip install --force-reinstall dist/*.whl
+	pip install --force-reinstall cython dist/*.whl
 	cd /tmp/$(PRJ)
 	python -c 'import foo.bar_a; foo.bar_a.print_me()'
 	python -c 'import foo.bar_b; foo.bar_b.print_me()'
 	python -c 'import foo.sub.sub; foo.sub.sub.print_me()'
 	python -c 'import foo2.bar_c; foo2.bar_c.print_me()'
 	python -c 'import foo2.bar_d; foo2.bar_d.print_me()'
-	python -c 'import foo3.bar_e; foo3.bar_e.print_me()' | true
+	python -c 'import foo3.bar_e; foo3.bar_e.print_me()' || true
 	rm -Rf /tmp/$(PRJ)
 
 
@@ -111,7 +115,7 @@ dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) | dist/
 	@$(VALIDATE_VENV)
 	export PBR_VERSION=$$(git describe --tags)
 	# Pre-pep517 $(PYTHON) setup.py bdist_wheel
-	pip wheel --no-deps -w dist .
+	pip wheel --no-deps --no-build-isolation --use-pep517 -w dist .
 
 
 ## Create a binary wheel distribution for different version
