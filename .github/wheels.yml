@@ -1,7 +1,16 @@
 name: Build
 
-on: [push, pull_request]
-
+# TODO: limité à master, publier auto l'artifact sur pypi
+# TODO: faire un script de validation des artifacts (recherche so)
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v[012].[0-9]+.[0-9]+
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -26,9 +35,8 @@ jobs:
         #   CIBW_SOME_OPTION: value
         env:
           CIBW_SKIP: cp310-*
-          # FIXME
-          PIP_EXTRA_INDEX_URL: https://pypi.org/simple
-          PIP_INDEX_URL: https://test.pypi.org/simple
+          # PIP_EXTRA_INDEX_URL: https://pypi.org/simple
+          # PIP_INDEX_URL: https://test.pypi.org/simple
 
 
       - uses: actions/upload-artifact@v2
