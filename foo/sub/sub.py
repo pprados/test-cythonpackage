@@ -2,10 +2,10 @@ import sys
 
 import cython
 
-def print_me():
+def print_me() -> bool:
     if cython.compiled:
         print("foo.sub.sub compiled.")
-        sys.exit(0)
+        return True
     else:
         print("foo.sub.sub interpreted.")
-        sys.exit(1)
+        return False

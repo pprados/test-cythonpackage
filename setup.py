@@ -12,10 +12,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    # setup_requires=['cythonpackage[build]>=0.1.1'],
+    setup_requires=['cythonpackage[build]'],
+    # Note: setuptools 44.0.0 with PEP-517 can not manage extra parameter in setup.cfg
     cythonpackage=True,
-    # name="test-cythonpackage",
-    # version="v0.0.0",
+
+    # To update low level parameters
     # cythonpackage={
     #     "inject_ext_modules": True,
     #     "inject_init": True,
@@ -23,5 +24,10 @@ setup(
     #     "compile_pyc": True,
     #     "optimize": 2,
     # },
+
+    # To build only with setup()
+    # name="test-cythonpackage",
+    # version="v0.0.0",
+
     packages=find_packages(),
 )

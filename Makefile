@@ -5,16 +5,21 @@ SHELL=/bin/bash
 MAKEFLAGS += --no-print-directory
 
 PRJ=test-cythonpackage
+PRJ_PACKAGE:=$(PRJ)
 PYTHON=python3
 PYTHON_SRC=$(shell find . -name '*.py' -not -path "./venv/*" -not -path "./.eggs/*" -not -path "./build/*")
 REQUIREMENTS=
 TWINE_USERNAME?=__token__
 SIGN_IDENTITY?=$(USER)
-PLATFORM?=linux
+ifeq ($(OS),Windows_NT)
+    OS:= Windows
+else
+    OS:= $(shell sh -c 'uname 2>/dev/null || echo Unknown')
+endif
 
 GITHUB_USER?=$(USER)
 
-CHECK_VENV=if [[ $(VIRTUAL_ENV) == "" ]] ; \
+CHECK_VENV=if [[ "$(VIRTUAL_ENV)" == "" ]] ; \
   then ( echo -e "$(green)Use: $(cyan)virtualenv$(VENV)$(green) before using $(cyan)make$(normal)"; exit 1 ) ; fi
 
 ACTIVATE_VENV=source $(VIRTUAL_ENV)/bin/activate
@@ -82,6 +87,7 @@ clean:
 	@rm -rf .eggs $(PRJ).egg-info .mypy_cache .pytest_cache .start build nohup.out dist \
 		.make-* .pytype out.json
 
+## Download the dependencies
 init:
 	pip install -e '.[dev]'
 
@@ -92,17 +98,13 @@ test: bdist
 	rm -Rf build dist
 	python setup.py bdist_wheel
 	mkdir -p /tmp/$(PRJ)
+	cp test.py /tmp/$(PRJ)
 	pip install -q virtualenv
 	python -m virtualenv /tmp/$(PRJ)/venv
 	source /tmp/$(PRJ)/venv/bin/activate
 	pip install --force-reinstall cython dist/*.whl
 	cd /tmp/$(PRJ)
-	python -c 'import foo.bar_a; foo.bar_a.print_me()'
-	python -c 'import foo.bar_b; foo.bar_b.print_me()'
-	python -c 'import foo.sub.sub; foo.sub.sub.print_me()'
-	python -c 'import foo2.bar_c; foo2.bar_c.print_me()'
-	python -c 'import foo2.bar_d; foo2.bar_d.print_me()'
-	python -c 'import foo3.bar_e; foo3.bar_e.print_me()' || true
+	python 'test.py'
 	rm -Rf /tmp/$(PRJ)
 
 
@@ -116,6 +118,7 @@ dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) | dist/
 	export PBR_VERSION=$$(git describe --tags)
 	# Pre-pep517 $(PYTHON) setup.py bdist_wheel
 	pip wheel --no-deps --no-build-isolation --use-pep517 -w dist .
+	auditwheel repair $@
 
 
 ## Create a binary wheel distribution for different version
@@ -123,10 +126,12 @@ bdist: dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl | dist/
 
 ## Create all binary wheel distribution for different version for the platform
 bdist-all: | dist/
-	@$(VALIDATE_VENV)
+	$(VALIDATE_VENV)
 	pip install cibuildwheel
 	export PBR_VERSION=$$(git describe --tags 2>/dev/null | echo "0.0.0.0")
-	CIBW_SKIP="cp310-*" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(PLATFORM)
+	#CIBW_SKIP="cp310-*" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(OS)
+	CIBW_BUILD="cp310-*" CIBW_ARCHS="auto" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
+#	CIBW_BUILD="cp310-*" $(PYTHON) -m cibuildwheel --archs all --output-dir dist --plat manylinux2014_x86_64 #--platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
 
 .PHONY: download-artifacts
 # Download the last artifacts generated with gihub Action

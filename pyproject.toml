@@ -33,3 +33,7 @@ name = 'private'
 url = 'http://localhost:8888/simple'
 #name = 'test'
 #url = 'https://test.pypi.org/simple'
+
+#[tool.cibuildwheel.linux]
+#repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
+
