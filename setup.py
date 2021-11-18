@@ -19,7 +19,7 @@ from setuptools import setup
 from setuptools import setup,find_packages
 
 setup(
-    setup_requires=['cythonpackage[build]==0.0.16'],
+    setup_requires=['cythonpackage[build]==0.1.6'],
     # Note: setuptools 44.0.0 with PEP-517 can not manage extra parameter in setup.cfg
     # cythonpackage=True,
 

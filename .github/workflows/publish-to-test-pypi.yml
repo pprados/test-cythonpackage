@@ -17,8 +17,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        #os: [ubuntu-20.04, windows-2019, macos-10.15]
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, windows-2019, macos-10.15]
 
     steps:
       - uses: actions/checkout@v2
@@ -33,7 +32,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.2.2
         env:
           #CIBW_SKIP: cp310-*
-          CIBW_BUILD: cp310-*
+          #CIBW_BUILD: cp310-*
 
 
       - uses: actions/upload-artifact@v2
@@ -70,6 +69,10 @@ jobs:
         with:
           name: artifact
           path: dist
+
+      - name: Set PBR_VERSION
+        # Force the version, because pbr can not detect the version with a git clone with tags
+        run: echo "PBR_VERSION=$(git describe --tags)" >> $GITHUB_ENV
 
       - uses: pypa/gh-action-pypi-publish@v1.4.2
         with:

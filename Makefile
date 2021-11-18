@@ -154,9 +154,8 @@ bdist-all: | dist/
 	$(VALIDATE_VENV)
 	pip install cibuildwheel
 	export PBR_VERSION=$$(git describe --tags 2>/dev/null | echo "0.0.0.0")
-	#CIBW_SKIP="cp310-*" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(OS)
-	CIBW_BUILD="cp310-*" CIBW_ARCHS="auto" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
-#	CIBW_BUILD="cp310-*" $(PYTHON) -m cibuildwheel --archs all --output-dir dist --plat manylinux2014_x86_64 #--platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
+	CIBW_BUILD="cp38-*" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
+	# $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
 
 .PHONY: download-artifacts
 # Download the last artifacts generated with gihub Action
