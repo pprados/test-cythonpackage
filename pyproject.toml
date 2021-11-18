@@ -1,10 +1,10 @@
-#build-system]
-#requires = ["setuptools>=42", "wheel"]
-#build-backend = "setuptools.build_meta"
-
 [build-system]
-build-backend = "poetry.core.masonry.api"
-requires = ["poetry-core>=1.0.0", "cythonpackage[build]"]
+requires = ["setuptools>=42", "wheel","cython"]
+build-backend = "setuptools.build_meta"
+
+#[build-system]
+#build-backend = "poetry.core.masonry.api"
+#requires = ["poetry-core>=1.0.0", "cythonpackage[build]"]
 
 [tool.poetry]
 name = "test-cythonpackage"
@@ -19,6 +19,7 @@ packages = [
 ]
 exclude = ["**/[!__]*.py"] # Remove source code
 build = 'poetry_build.py'
+readme = 'README.md'
 
 [tool.poetry.dependencies]
 python = "^3.7"

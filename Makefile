@@ -82,10 +82,25 @@ dump-%:
 		echo "$*=${${*}}";
 	fi
 
+ifneq ($(TERM),)
+normal:=$(shell tput sgr0)
+bold:=$(shell tput bold)
+red:=$(shell tput setaf 1)
+green:=$(shell tput setaf 2)
+yellow:=$(shell tput setaf 3)
+blue:=$(shell tput setaf 4)
+purple:=$(shell tput setaf 5)
+cyan:=$(shell tput setaf 6)
+white:=$(shell tput setaf 7)
+gray:=$(shell tput setaf 8)
+endif
+
 ## Clean project
 clean:
 	@rm -rf .eggs $(PRJ).egg-info .mypy_cache .pytest_cache .start build nohup.out dist \
-		.make-* .pytype out.json
+		.make-* .pytype out.json \
+		foo/*.c foo/sub/*.c foo2/*.c foo3/*.c
+
 
 ## Download the dependencies
 init:
@@ -93,32 +108,42 @@ init:
 
 ## Test the usage of cythonpackage
 test: bdist
-	export PIP_EXTRA_INDEX_URL=https://pypi.org/simple
-	export PIP_INDEX_URL=https://test.pypi.org/simple
+	@echo -e "$(green)Build package$(normal)"
+	#export PIP_EXTRA_INDEX_URL=http://localhost/simple
+	export PIP_EXTRA_INDEX_URL=https://test.pypi.org/simple
+	#export PIP_EXTRA_INDEX_URL=https://pypi.org/simple
+	#export PIP_INDEX_URL=https://test.pypi.org/simple
 	rm -Rf build dist
 	python setup.py bdist_wheel
-	mkdir -p /tmp/$(PRJ)
-	cp test.py /tmp/$(PRJ)
+	mkdir -p $(TEMP)/$(PRJ)
+	cp test.py $(TEMP)/$(PRJ)
+	echo -e "$(green)Create temporary virtualenv$(normal)"
 	pip install -q virtualenv
-	python -m virtualenv /tmp/$(PRJ)/venv
-	source /tmp/$(PRJ)/venv/bin/activate
-	pip install --force-reinstall cython dist/*.whl
-	cd /tmp/$(PRJ)
+	python --version
+	python -m virtualenv $(TEMP)/$(PRJ)/venv
+	source $(TEMP)/$(PRJ)/venv/bin/activate
+	echo -e "$(green)Install project$(normal)"
+	pip install --force-reinstall cython ../dist/*.whl
+	pip install --force-reinstall cython dist/test*.whl
+	cd $(TEMP)/$(PRJ)
+	echo -e "$(green)Test project$(normal)"
 	python 'test.py'
-	rm -Rf /tmp/$(PRJ)
+	rm -Rf $(TEMP)/$(PRJ)
 
 
 # --------------------------- Distribution
 dist/:
-	mkdir dist
+	@mkdir dist
 
 .PHONY: bdist
-dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) | dist/
+dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) setup.* pyproject.toml | dist/
 	@$(VALIDATE_VENV)
 	export PBR_VERSION=$$(git describe --tags)
 	# Pre-pep517 $(PYTHON) setup.py bdist_wheel
-	pip wheel --no-deps --no-build-isolation --use-pep517 -w dist .
-	auditwheel repair $@
+	#pip wheel --no-deps --no-build-isolation --use-pep517 -w dist .
+	#pip wheel --use-pep517 -w dist .
+	python setup.py bdist_wheel
+	# FIXME auditwheel repair $@
 
 
 ## Create a binary wheel distribution for different version
@@ -166,7 +191,7 @@ dist: clean-dist bdist-all sdist
 
 .PHONY: check-twine test-keyring test-twine
 ## Check the distribution before publication
-check-twine: bdist-all
+check-twine: bdist
 	@$(VALIDATE_VENV)
 	twine check \
 		$(shell find dist/ -type f \( -name "*.whl" -or -name '*.gz' \) -and ! -iname "*dev*" )
