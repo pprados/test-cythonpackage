@@ -1,33 +1,42 @@
 #!/usr/bin/env python
 # Version with PBR
-# from setuptools import setup
+from setuptools import setup
 # setup(
-#     setup_requires=['pbr', 'cythonpackage[build]'],
-#     cythonpackage=True,
+#     setup_requires=['pbr', 'cythonpackage[build]==0.0.12'],
+#     cythonpackage={
+#         "inject_ext_modules": True,
+#         "inject_init": True,
+#         "remove_source": True,
+#         "compile_py": False,
+#         "optimize": 2,
+#         "exclude":["**/_b.py"],
+#     },
 #     pbr=True,
-#     requires=['cythonpackage'],
+#     install_requires=['cythonpackage==0.0.12'],
 # )
 
 # Version without PBR
-from setuptools import setup, find_packages
+from setuptools import setup,find_packages
 
 setup(
     setup_requires=['cythonpackage[build]'],
     # Note: setuptools 44.0.0 with PEP-517 can not manage extra parameter in setup.cfg
-    cythonpackage=True,
+    # cythonpackage=True,
 
     # To update low level parameters
-    # cythonpackage={
-    #     "inject_ext_modules": True,
-    #     "inject_init": True,
-    #     "remove_source": True,
-    #     "compile_pyc": True,
-    #     "optimize": 2,
-    # },
+    cythonpackage={
+        "ext_modules": True,
+        "install_requires": True,
+        "inject_init": True,
+        "remove_source": True,
+        "compile_py": True,
+        "optimize": 1,
+        "exclude":["**/*_b.py"]
+    },
 
     # To build only with setup()
     # name="test-cythonpackage",
     # version="v0.0.0",
-
+    #install_requires=['cythonpackage'],
     packages=find_packages(),
 )

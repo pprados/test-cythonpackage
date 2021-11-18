@@ -5,5 +5,5 @@ def print_me() -> bool:
         print("foo.bar_b compiled.")
         return True
     else:
-        print("foo.bar_a interpreted.")
+        print("foo.bar_b interpreted.")
         return False
