@@ -32,7 +32,6 @@ setup(
         "compile_py": True,
         "optimize": 1,
         "exclude":["**/*_b.py"]
-        #"exclude":[]
     },
 
     # To build only with setup()

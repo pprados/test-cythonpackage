@@ -138,7 +138,7 @@ dist/:
 .PHONY: bdist
 dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) setup.* pyproject.toml | dist/
 	@$(VALIDATE_VENV)
-	export PBR_VERSION=$$(git describe --tags)
+	export PBR_VERSION=$${PBR_VERSION:-$$(git describe --tags) }
 	# Pre-pep517 $(PYTHON) setup.py bdist_wheel
 	#pip wheel --no-deps --no-build-isolation --use-pep517 -w dist .
 	#pip wheel --use-pep517 -w dist .
@@ -153,7 +153,7 @@ bdist: dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl | dist/
 bdist-all: | dist/
 	$(VALIDATE_VENV)
 	pip install cibuildwheel
-	export PBR_VERSION=$$(git describe --tags 2>/dev/null | echo "0.0.0.0")
+	export PBR_VERSION=$${PBR_VERSION:-$$(git describe --tags) }
 	CIBW_BUILD="cp38-*" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
 	# $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
 

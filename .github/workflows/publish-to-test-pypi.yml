@@ -32,13 +32,30 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.2.2
         env:
-          #CIBW_SKIP: cp310-*
           CIBW_BUILD: cp38-*
 
 
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl
+
+  build_default:
+    name: Build distribution without compilation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-python@v2
+        name: Install Python
+        with:
+          python-version: '3.8'
+
+      - name: Build std bdist
+        run: CYTHONPACKAGE=false python setup.py bdist_wheel
+
+      - uses: actions/upload-artifact@v2
+        with:
+          path: dist/*.whl
 
   build_sdist:
     name: Build source distribution
@@ -78,7 +95,5 @@ jobs:
       - uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           user: __token__
-#          password: ${{ secrets.pypi_password }}
-          # To test:
           password: ${{ secrets.TESTCYTHONPACKAGE_TEST_PYPI_API_TOKEN }}
           repository_url: https://test.pypi.org/legacy/
