@@ -149,12 +149,21 @@ dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) setup.* py
 ## Create a binary wheel distribution for different version
 bdist: dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl | dist/
 
+## Create standard package (without compilation)
+bdist-default:
+	echo -e "$(green)Build default package$(normal)"
+	CYTHONPACKAGE=False python setup.py bdist_wheel
+
 ## Create all binary wheel distribution for different version for the platform
-bdist-all: | dist/
+bdist-all: bdist-default | dist/
 	$(VALIDATE_VENV)
 	pip install cibuildwheel
-	export PBR_VERSION=$${PBR_VERSION:-$$(git describe --tags) }
-	CIBW_BUILD="cp38-*" $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
+	echo -e "$(green)Build compiled platform package$(normal)"
+	CIBW_REPAIR_WHEEL_COMMAND='' \
+	CIBW_ENVIRONMENT="PBR_VERSION=$${PBR_VERSION:-$$(git describe --tags) }" \
+	CIBW_BUILD="cp38-*" \
+	$(PYTHON) -m cibuildwheel --output-dir dist \
+		--platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
 	# $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
 
 .PHONY: download-artifacts

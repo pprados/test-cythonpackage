@@ -19,11 +19,12 @@ from setuptools import setup
 from setuptools import setup,find_packages
 
 setup(
-    setup_requires=['cythonpackage[build]'],
-    # Note: setuptools 44.0.0 with PEP-517 can not manage extra parameter in setup.cfg
-    # cythonpackage=True,
-
-    # To update low level parameters
+    setup_requires=['pbr','cythonpackage[build]'],
+    pbr=True,
+    # # Note: setuptools 44.0.0 with PEP-517 can not manage extra parameter in setup.cfg
+    # # cythonpackage=True,
+    #
+    # # To update low level parameters
     cythonpackage={
         "ext_modules": True,
         "install_requires": True,
