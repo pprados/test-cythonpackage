@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=42", "wheel","cython"]
+build-backend = "setuptools.build_meta"
+
+#[build-system]
+#build-backend = "poetry.core.masonry.api"
+#requires = ["poetry-core>=1.0.0", "cythonpackage[build]"]
+
+[tool.poetry]
+name = "test-cythonpackage"
+version = "0.0.0"  # Be calculate
+description = "Test cythonpackage"
+authors = ["Your Name <your.name@example.com>"]
+license = "Apache-2.0"
+packages = [
+    { include = "foo" },
+    { include = "foo2" },
+    { include = "foo3" },
+]
+exclude = ["**/[!__]*.py"] # Remove source code
+build = 'poetry_build.py'
+readme = 'README.md'
+
+[tool.poetry.dependencies]
+python = "^3.7"
+cythonpackage = "*"
+
+[tool.poetry.dev-dependencies]
+cibuildwheel = "^2.1.*"
+twine = "^3.*"
+
+[[tool.poetry.source]]
+name = 'private'
+url = 'http://localhost:8888/simple'
+#name = 'test'
+#url = 'https://test.pypi.org/simple'
+
+#[tool.cibuildwheel.linux]
+#repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
+
