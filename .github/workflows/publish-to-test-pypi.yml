@@ -1,10 +1,11 @@
-name: Build and upload to PyPI
+name: Build and upload to Test PyPI
 
 # Build on every branch push, tag push, and pull request change:
 on:
   push:
     branches:
       - develop
+      - release/**
     tags:
       - v*rc
     paths-ignore:
@@ -12,6 +13,7 @@ on:
       - 'README.md'
 
 jobs:
+
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
@@ -22,7 +24,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      # Used to host cibuildwheel
       - uses: actions/setup-python@v2
         name: Install Python
         with:
@@ -31,16 +32,11 @@ jobs:
       - name: Install pypa/build
         run: python -m pip install build wheel pbr twine --user
 
-      - name: Build std bdist
-        run: echo "CIBW_ENVIRONMENT=PBR_VERSION=$(git describe --tags)" >> $GITHUB_ENV
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.2.2
         env:
-          CIBW_BUILD: cp38-*
+          CIBW_ENVIRONMENT: PBR_VERSION=${{ github.ref_name }}
 
-      - name: list
-        run: ls ./wheelhouse
 
       - uses: actions/upload-artifact@v2
         with:
@@ -61,7 +57,9 @@ jobs:
         run: python -m pip install build wheel pbr twine --user
 
       - name: Build std bdist
-        run: PBR_VERSION="$(git describe --tags)" CYTHONPACKAGE=false python setup.py bdist_wheel
+        run: CYTHONPACKAGE=false python setup.py bdist_wheel
+        env:
+          PBR_VERSION: ${{ github.ref_name }}
 
       - uses: actions/upload-artifact@v2
         with:
@@ -79,7 +77,9 @@ jobs:
           python-version: '3.8'
 
       - name: Build sdist
-        run: PBR_VERSION="$(git describe --tags)" python setup.py sdist
+        run: python setup.py sdist
+        env:
+          PBR_VERSION: ${{ github.ref_name }}
 
       - uses: actions/upload-artifact@v2
         with:
