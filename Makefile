@@ -100,6 +100,7 @@ clean:
 	@rm -rf .eggs $(PRJ).egg-info .mypy_cache .pytest_cache .start build nohup.out dist \
 		.make-* .pytype out.json \
 		foo/*.c foo/sub/*.c foo2/*.c foo3/*.c
+	find . -name __pycache__ -exec rm {} \;
 
 
 ## Download the dependencies
@@ -138,12 +139,15 @@ dist/:
 .PHONY: bdist
 dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl: $(REQUIREMENTS) $(PYTHON_SRC) setup.* pyproject.toml | dist/
 	@$(VALIDATE_VENV)
-	export PBR_VERSION=$${PBR_VERSION:-$$(git describe --tags) }
+	export PBR_VERSION=0.0.1
 	# Pre-pep517 $(PYTHON) setup.py bdist_wheel
 	#pip wheel --no-deps --no-build-isolation --use-pep517 -w dist .
 	#pip wheel --use-pep517 -w dist .
-	python setup.py bdist_wheel
+	#python setup.py bdist_wheel
+	python -m build -w
 	# FIXME auditwheel repair $@
+	pkginfo dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl
+	unzip -l dist/$(subst -,_,$(PRJ_PACKAGE))-*.whl
 
 
 ## Create a binary wheel distribution for different version
@@ -155,16 +159,16 @@ bdist-default:
 	CYTHONPACKAGE=False python setup.py bdist_wheel
 
 ## Create all binary wheel distribution for different version for the platform
-bdist-all: bdist-default | dist/
+#bdist-all: bdist-default | dist/
+bdist-all:  | dist/
 	@$(VALIDATE_VENV)
 	pip install cibuildwheel
 	echo -e "$(green)Build compiled platform package$(normal)"
+	CIBW_BUILD=cp310-* \
 	CIBW_REPAIR_WHEEL_COMMAND='' \
-	CIBW_ENVIRONMENT="PBR_VERSION=0.0.1 \
-	CIBW_BUILD="cp38-*" \
+	CIBW_ENVIRONMENT="PBR_VERSION=0.0.0" \
 	$(PYTHON) -m cibuildwheel --output-dir dist \
 		--platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
-	# $(PYTHON) -m cibuildwheel --output-dir dist --platform $(shell echo $(OS) | tr '[:upper:]' '[:lower:]')
 
 
 .PHONY: download-artifacts
