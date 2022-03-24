@@ -22,18 +22,17 @@ setup(
     # pbr=True,
     # # Note: setuptools 44.0.0 with PEP-517 can not manage extra parameter in setup.cfg
     setup_requires=['cythonpackage[build]'],
-    # cythonpackage=True,
+    cythonpackage=True,
     #
     # # To update low level parameters
-    cythonpackage={
-        "ext_modules": True,
-        "install_requires": False,
-        "inject_init": True,
-        "remove_source": True,
-        "compile_py": True,
-        "optimize": 2,
-        "exclude":["**/*_b.py"]
-    },
+    # cythonpackage={
+    #     "ext_modules": True,
+    #     "inject_init": True,
+    #     "remove_source": True,
+    #     "compile_py": True,
+    #     "optimize": 2,
+    #     "exclude":["**/*_b.py"]
+    # },
 
     # To build only with setup()
     # name="test-cythonpackage",
